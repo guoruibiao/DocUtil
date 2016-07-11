@@ -1,0 +1,183 @@
+
+            <html><head><meta charset='utf-8'><title>BlogTest</title><meta name="viewport" content="width=device-width, initial-scale=1">
+            <style>body{
+    background: greenyellow;
+}</style>
+            <link rel="stylesheet" href="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap.min.css">
+            <script src="http://apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"></script>
+            <script src="http://apps.bdimg.com/libs/bootstrap/3.3.0/js/bootstrap.min.js"></script></head><body><div class='container'><div class="row-fluid">
+            <div class="span12">
+             <p>今天看到了一个Python库，名为markdown。瞬间就给了我一个灵感，那就是制作一个将markdown文件转换成html文件的小工具。
+<img alt="镇楼图" src="http://img.blog.csdn.net/20160708193443282" /></p>
+<h2>我的实验环境</h2>
+<ul>
+<li>操作系统： Windows 7 64位 旗舰版</li>
+<li>Python版本： 2.7.11</li>
+<li>IDE： PyCharm pro 2016.1</li>
+<li>所需依赖：<ul>
+<li>optparser</li>
+<li>markdown</li>
+</ul>
+</li>
+</ul>
+<h2>转换核心</h2>
+<p>转换的过程很简单，只需要使用markdown库即可，具体使用方法如下：</p>
+<p>```
+from markdown import markdown</p>
+<p>def parse(md_text):
+    return markdown(md_text)
+```</p>
+<h2>优化</h2>
+<p>为了使我们的程序更具特色，也就是类Unix命令行风格。我这里添加了optparser的支持。
+核心代码如下：</p>
+<p>```</p>
+<h1>OptParser库规范性用法，以实现Unix风格的命令行处理程序</h1>
+<p>usage = \
+    """
+    '-i', --infile . source markdown file
+    '-o', --outfile. target html file
+    '-s', --style. stylesheet for output html file,this is not for mandatory
+    """
+parser = optparse.OptionParser(usage)</p>
+<p>parser.add_option('-i', '--input', dest='infile', type='string', help='input markdown source file')
+parser.add_option('-o', '--output', dest='outfile', type='string', help='out put html file')
+(options, args) = parser.parse_args()
+infile = options.infile
+outfile = options.outfile
+```</p>
+<p>举例：</p>
+<p>```
+python md2html.py -i input.md -o outputfile.html</p>
+<h1>我们在命令行输入的参数就会转移到下面的两个变量中了</h1>
+<p>(options, args) = parser.parse_args()
+infile = options.infile
+outfile = options.outfile
+```</p>
+<h2>美化</h2>
+<p>为了使得我们的html更加的美观，我这里采取了BootStrap进行了美化。使用的方式是CDN的方式。这样可以使得我们的文件目录更加的清爽，而且可以给用户一个更加简便的使用体验。</p>
+<p>使用的模板如下：</p>
+<p><code>&lt;!DOCTYPE html&gt;
+&lt;html&gt;
+&lt;head&gt;
+    &lt;meta charset="utf-8"&gt;
+    &lt;title&gt;BootStrap模板&lt;/title&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+      &lt;!-- 引入 Bootstrap --&gt;
+      &lt;link href="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet"&gt;
+      &lt;link href="http://apps.bdimg.com/libs/bootstrap/css/bootstrap.min.css" rel="stylesheet"&gt;
+   &lt;script src="js/jquery-2.2.4.min.js"&gt;&lt;/script&gt;
+   &lt;script src="http://apps.bdimg.com/libs/bootstrap/js/bootstrap.min.js"&gt;&lt;/script&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;/body&gt;
+&lt;!-- jQuery (Bootstrap 的 JavaScript 插件需要引入 jQuery) --&gt;
+      &lt;script src="https://code.jquery.com/jquery.js"&gt;&lt;/script&gt;
+      &lt;!-- 包括所有已编译的插件 --&gt;
+      &lt;script src="js/bootstrap.min.js"&gt;&lt;/script&gt;
+&lt;/html&gt;</code></p>
+<h2>完整代码</h2>
+<p>```</p>
+<h1>coding:utf-8</h1>
+<h1><strong>author</strong> = 'Mark sinoberg'</h1>
+<h1><strong>date</strong> = '2016/7/8'</h1>
+<h1><strong>Desc</strong> = 将markdown文件转换为带有样式的html文件</h1>
+<p>from markdown import markdown
+import optparse</p>
+<h1>创建一个专门用于处理解析器的工具类</h1>
+<p>class MDParser:
+    # 初始化开始
+    def <strong>init</strong>(self):
+        print 'Ready to parser markdown source file to html file.'</p>
+<pre><code># 创建一个对输入文件进行解析的方法，输出文件即为符合html语法的不完整文件
+def parsre(self, infile):
+    infile = open(infile, 'rb')
+    indata = infile.read()
+    indata = u'%s' % indata
+    infile.close()
+    parsedata = markdown(indata)
+    return parsedata
+
+# 为输出文件添加自定义标题，并且添加缺少的html头部
+def appendHead(self, data, title):
+    head = \
+        """
+        &lt;html&gt;&lt;head&gt;&lt;meta charset='utf-8'&gt;&lt;title&gt;%s&lt;/title&gt;&lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;
+ &lt;link rel="stylesheet" href="http://apps.bdimg.com/libs/bootstrap/3.3.0/css/bootstrap.min.css"&gt;
+ &lt;script src="http://apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"&gt;&lt;/script&gt;
+ &lt;script src="http://apps.bdimg.com/libs/bootstrap/3.3.0/js/bootstrap.min.js"&gt;&lt;/script&gt;&lt;/head&gt;&lt;body&gt;&lt;div class='container'&gt;&lt;div class="row-fluid"&gt;
+    &lt;div class="span12"&gt;
+        """ % title
+    newdata = head + data
+    return newdata
+
+# 配合上面的添加头部文件，下面的这个方法适用于添加html尾部标签，使得文件符合html规范
+def appendTail(self, data):
+    tail = \
+        """
+        &lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;script src="http://apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"&gt;&lt;/script&gt;
+&lt;script src="http://apps.bdimg.com/libs/bootstrap/3.2.0/js/bootstrap.min.js"&gt;&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;
+        """
+    data += tail
+    return data
+
+# 将完整的html文件输出到指定的位置
+def output(self, data, outfile):
+    outfile = open(outfile, 'wb')
+    outfile.write(data)
+    outfile.close()
+    print "Translated Succeed!"
+</code></pre>
+<h1>OptParser库规范性用法，以实现Unix风格的命令行处理程序</h1>
+<p>usage = \
+    """
+    '-i', --infile . source markdown file
+    '-o', --outfile. target html file
+    '-s', --style. stylesheet for output html file,this is not for mandatory
+    """
+parser = optparse.OptionParser(usage)</p>
+<p>parser.add_option('-i', '--input', dest='infile', type='string', help='input markdown source file')
+parser.add_option('-o', '--output', dest='outfile', type='string', help='out put html file')
+(options, args) = parser.parse_args()
+infile = options.infile
+outfile = options.outfile</p>
+<p>if <strong>name</strong> == "<strong>main</strong>":
+    tool = MDParser()
+    title = raw_input('Please input the title you want:\n')
+    parsedata = tool.parsre(infile)
+    data = tool.appendHead(parsedata, title)
+    fulldata = tool.appendTail(data)
+    tool.output(fulldata, outfile)</p>
+<p>```</p>
+<h2>结果展示</h2>
+<ul>
+<li>程序运行前</li>
+</ul>
+<p><img alt="起始文件目录" src="http://img.blog.csdn.net/20160708192801545" />
+<br></p>
+<ul>
+<li>
+<p>infile.md内容：
+    <img alt="源文件" src="http://img.blog.csdn.net/20160708192901014" /></p>
+</li>
+<li>
+<p>程序运行方法：
+    <img alt="如何运行" src="http://img.blog.csdn.net/20160708192930233" /></p>
+</li>
+<li>
+<p>生成结果
+    <img alt="html代码" src="http://img.blog.csdn.net/20160708193001836" />
+    <img alt="浏览器验证" src="http://img.blog.csdn.net/20160708193018202" /></p>
+</li>
+</ul>
+<h2>缺点</h2>
+<p>这个工具最大的缺点就是不能将中文进行转换，原因是ascii码超出字符限制。
+如果大家有更好的方法，不妨私信我！ 大家一起学习！</p>
+            <div class="span-12">
+            <!-- 添加评论功能-->
+            <div id="uyan_frame"></div>
+            <script type="text/javascript" id="UYScript" src="http://v1.uyan.cc/js/iframe.js?UYUserId=0" async="">
+            </script>
+            </div>
+             </div></div></div><script src="http://apps.bdimg.com/libs/jquery/2.1.1/jquery.min.js"></script>
+             <script src="http://apps.bdimg.com/libs/bootstrap/3.2.0/js/bootstrap.min.js"></script></body></html>
+             
