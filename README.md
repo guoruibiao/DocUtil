@@ -24,6 +24,12 @@ A Simple automatic document generate tool for markdown user.
 
 下一个版本将进行大面积的重构，以达到较好的使用效果。
 
+## 关于release
+
+这里新增了一个release文件夹，内包含一个md2html.exe的小工具，可以方便的将单个的markdown源文件
+
+转换成html文件，具体请参照word使用文档。
+
 ## 后续的话
 
 如果你看到了这句话，说明我的1.0版本还没有彻底的升级。当然了你也可以修改源代码来适配你的审美。
